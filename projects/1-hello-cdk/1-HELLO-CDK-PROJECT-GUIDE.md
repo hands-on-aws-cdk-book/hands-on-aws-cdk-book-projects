@@ -1,4 +1,5 @@
 [[first_application]]
+
 == Your first CDK applications
 
 In this chapter you will learn to build a simple single-component CDK application using Amazon S3 so that you can practice deploying and changing an application. In this hands-on tutorial chapter you will write a CDK stack using an L2 construct, deploy it, change it, and deploy again. You will also learn how to write in-line documentation using JSDocs.
@@ -7,6 +8,7 @@ In this chapter you will learn to build a simple single-component CDK applicatio
 - Change the bucket
 - Document your code
 - Review what you built
+- What comes next
 
 === Deploy an S3 bucket
 
@@ -14,22 +16,22 @@ Here's an example of a single component CDK application using Python that deploy
 
 [source,typescript]
 ----
-from aws_cdk import core
-import aws_cdk.aws_s3 as s3
-
-class S3BucketStack(core.Stack):
-    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
-        super().__init__(scope, id, **kwargs)
-
-        # Create an S3 bucket
-        my_bucket = s3.Bucket(
-            self, 'MyBucket',
-            bucket_name='my-s3-bucket' # Replace with desired bucket name
-        )
-
-app = core.App()
-S3BucketStack(app, 'S3BucketStack')
-app.synth()
+    from aws_cdk import core
+    import aws_cdk.aws_s3 as s3
+    
+    class S3BucketStack(core.Stack):
+        def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+            super().__init__(scope, id, **kwargs)
+    
+            # Create an S3 bucket
+            my_bucket = s3.Bucket(
+                self, 'MyBucket',
+                bucket_name='my-s3-bucket' # Replace with desired bucket name
+            )
+    
+    app = core.App()
+    S3BucketStack(app, 'S3BucketStack')
+    app.synth()
 ----
 
 Explanation:
@@ -47,26 +49,26 @@ Let's modify the previous example of the CDK application that deploys an S3 buck
 
 [source,typescript]
 ----
-from aws_cdk import core
-import aws_cdk.aws_s3 as s3
-
-class S3BucketStack(core.Stack):
-    def __init__(self, scope: core.Construct, id: str, bucket_name: str, **kwargs) -> None:
-        super().__init__(scope, id, **kwargs)
-
-        # Create an S3 bucket
-        my_bucket = s3.Bucket(
-            self, 'MyBucket',
-            bucket_name=bucket_name,
-            versioned=True,  # Enable versioning for the bucket
-            encryption=s3.BucketEncryption.S3_MANAGED,  # Enable S3-managed encryption
-            block_public_access=s3.BlockPublicAccess.BLOCK_ALL,  # Block public access to the bucket
-            removal_policy=core.RemovalPolicy.DESTROY  # Delete the bucket when the CloudFormation stack is deleted
-        )
-
-app = core.App()
-S3BucketStack(app, 'S3BucketStack', bucket_name='my-s3-bucket')
-app.synth()
+    from aws_cdk import core
+    import aws_cdk.aws_s3 as s3
+    
+    class S3BucketStack(core.Stack):
+        def __init__(self, scope: core.Construct, id: str, bucket_name: str, **kwargs) -> None:
+            super().__init__(scope, id, **kwargs)
+    
+            # Create an S3 bucket
+            my_bucket = s3.Bucket(
+                self, 'MyBucket',
+                bucket_name=bucket_name,
+                versioned=True,  # Enable versioning for the bucket
+                encryption=s3.BucketEncryption.S3_MANAGED,  # Enable S3-managed encryption
+                block_public_access=s3.BlockPublicAccess.BLOCK_ALL,  # Block public access to the bucket
+                removal_policy=core.RemovalPolicy.DESTROY  # Delete the bucket when the CloudFormation stack is deleted
+            )
+    
+    app = core.App()
+    S3BucketStack(app, 'S3BucketStack', bucket_name='my-s3-bucket')
+    app.synth()
 ----
 
 
@@ -85,22 +87,22 @@ Here's an example of how you can document your CDK project using JSDocs, which i
 
 [source,typescript]
 ----
-from aws_cdk import core 
-import aws_cdk.aws_s3 as s3 
-
-class S3BucketStack(core.Stack): 
- """ CDK stack for deploying an S3 bucket. """ 
-
-    def __init__(self, scope: core.Construct, id: str, bucket_name: str, **kwargs) -> None: 
-    """ Constructor for the S3BucketStack class. Args: scope (core.Construct): The CDK construct scope for the stack. id (str): The ID of the stack. bucket_name (str): The name of the S3 bucket to be created. **kwargs: Additional keyword arguments for the stack. """ 
-
-         super().__init__(scope, id, **kwargs) 
-         # Create an S3 bucket 
-          my_bucket = s3.Bucket( self, 'MyBucket', bucket_name=bucket_name,  versioned=True, # Enable versioning for the bucket
-        encryption=s3.BucketEncryption.S3_MANAGED, # Enable S3-managed encryption  
-        block_public_access=s3.BlockPublicAccess.BLOCK_ALL, # Block public access to the bucket 
-        removal_policy=core.RemovalPolicy.DESTROY # Delete the bucket when the CloudFormation stack is deleted
-        )
+    from aws_cdk import core 
+    import aws_cdk.aws_s3 as s3 
+    
+    class S3BucketStack(core.Stack): 
+     """ CDK stack for deploying an S3 bucket. """ 
+    
+        def __init__(self, scope: core.Construct, id: str, bucket_name: str, **kwargs) -> None: 
+        """ Constructor for the S3BucketStack class. Args: scope (core.Construct): The CDK construct scope for the stack. id (str): The ID of the stack. bucket_name (str): The name of the S3 bucket to be created. **kwargs: Additional keyword arguments for the stack. """ 
+    
+             super().__init__(scope, id, **kwargs) 
+             # Create an S3 bucket 
+              my_bucket = s3.Bucket( self, 'MyBucket', bucket_name=bucket_name,  versioned=True, # Enable versioning for the bucket
+            encryption=s3.BucketEncryption.S3_MANAGED, # Enable S3-managed encryption  
+            block_public_access=s3.BlockPublicAccess.BLOCK_ALL, # Block public access to the bucket 
+            removal_policy=core.RemovalPolicy.DESTROY # Delete the bucket when the CloudFormation stack is deleted
+            )
 ----
 
 Explanation:
@@ -116,13 +118,13 @@ You can use similar JSDoc comments to document other parts of your CDK project, 
 
 === What you built
 
-CDK is a popular framework used for infrastructure as code (IaC) development, allowing developers to define cloud resources using familiar programming languages.
+CDK lets you to define cloud resources using familiar programming languages. You created an S3 bucket that we can store objects in! Next we will create some objects to put in our bucket. 
 
-The final architecture of the CDK application will consist of the following components:
+Let's take a closer look at the architecture of the CDK application. CDK apps consist of the following components:
 
-1.	CDK Core: This is the core module of the CDK framework that provides the foundation for defining cloud resources using the supported programming language (e.g., Python, TypeScript, Java, etc.). It allows developers to define the desired infrastructure components, such as AWS resources, in their preferred programming language using classes, methods, and properties.
+1.	CDK Core: This is the core module of the CDK framework that provides the foundation for defining cloud resources using the supported programming language (e.g., TypeScript, Java, Python, etc.). It allows developers to define the desired infrastructure components, such as AWS resources, in their preferred programming language using classes, methods, and properties.
 
-2.	AWS CloudFormation: CDK leverages AWS CloudFormation as the underlying deployment framework. CloudFormation is a service that allows you to define, provision, and manage AWS resources using JSON or YAML templates. The CDK application will generate CloudFormation templates based on the code written using the CDK Core.
+2.	AWS CloudFormation: CDK is built on AWS CloudFormation. CloudFormation is a service that allows you to define, provision, and manage AWS resources using JSON or YAML templates. The CDK application generates CloudFormation templates based on the code written using the CDK Core.
 
 3.	AWS Services: The CDK application can utilize various AWS services, depending on the requirements of the application. This can include services like Amazon S3 for storage, Amazon RDS for databases, Amazon EC2 for virtual machines, AWS Lambda for serverless computing, Amazon API Gateway for API management, and more. The CDK application will define and configure these AWS resources using the CDK Core.
 
@@ -134,7 +136,9 @@ The final architecture of the CDK application will consist of the following comp
 
 The CDK application architecture leverages the CDK framework, AWS CloudFormation, and various AWS services to define, deploy, and manage cloud resources in an automated and programmatic manner. The application logic is included as custom code within the CDK application, and the entire infrastructure is managed as code using the IaC approach.
 
-=== Application architecture
+=== The architecture of CDK Applications
+
+Our first project is really simple. The rest of the book builds on this foundation. Here is a sneek peek and where we are going. 
 
 Application Architecture:
 1.	Frontend: The frontend of the application can be built using AWS Amplify, a set of tools and libraries for building web and mobile applications. Amplify provides features such as authentication, API management, storage, and UI components to simplify frontend development.
