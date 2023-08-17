@@ -4,5 +4,5 @@ This repository contains all project components, tutorials, and final project ou
 
 ## Table of Contents
 
-[projects/2-project-hello-cdk]
-[projects/3-project-energy-upload-notification]
+- (projects/2-project-hello-cdk)
+- (projects/3-project-energy-upload-notification)
