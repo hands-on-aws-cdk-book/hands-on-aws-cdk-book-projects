@@ -4,5 +4,5 @@ This repository contains all project components, tutorials, and final project ou
 
 ## Table of Contents
 
-- [Chapter 2 - Hello CDK](./projects/2-project-hello-cdk)
-- [Chapter 3 - Energy Upload Notification](./projects/3-project-energy-upload-notification)
+- [Chapter 1 - Set up your development environment](./projects/chapter-01-project-set-up-dev-env)
+- [Chapter 2 - Hello CDK](./projects/chapter-02-project-hello-cdk)
