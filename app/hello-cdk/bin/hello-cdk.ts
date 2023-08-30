@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 // Our imports include standard imports for the app
+// Import source map suppoer
 import "source-map-support/register";
+// Import the cdk library
 import * as cdk from "aws-cdk-lib";
 // Here we import all the stack and resources that
 // we are deploying within the app
