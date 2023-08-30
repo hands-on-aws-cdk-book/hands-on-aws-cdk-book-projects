@@ -32,7 +32,7 @@ export class HelloCdkStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: "index.main",
       code: lambda.Code.fromAsset(
-        path.join(__dirname, "./assets/lambda-hello-cdk")
+        path.join(__dirname, "./lambda/lambda-hello-cdk")
       ),
     });
 
