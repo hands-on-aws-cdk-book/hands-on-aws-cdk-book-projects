@@ -28,7 +28,7 @@ export class SharedResourcesStack extends cdk.Stack {
 
   public readonly rawDataUploadBucket: s3.Bucket;
   public readonly snsTopicRawUpload: sns.Topic;
-  public readonly snsTopicCalculatorSummary: any;
+  public readonly snsTopicCalculatorSummary: sns.Topic;
 
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     // Call super constructor
