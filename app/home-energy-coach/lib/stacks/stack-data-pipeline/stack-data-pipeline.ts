@@ -1,14 +1,4 @@
 /**
- * This stack does the following:
- * 1. Upload raw data to S3
- * 2. Trigger notification
- * 3. Transform CSV to JSON
- * 4. Save to bucket
- * 5. Trigger calculator
- * 6. Send notification
- */
-
-/**
  * Import various modules from AWS CDK and nodejs core libraries
  */
 import * as cdk from "aws-cdk-lib";
