@@ -7,7 +7,7 @@ import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 // Here we import all the stack and resources that
 // we are deploying within the app
-import { HelloCdkStack } from "../lib/stack-data-pipeline/stack-data-pipeline";
+import { HelloCdkStack } from "../lib/stacks/stack-data-pipeline/stack-data-pipeline";
 
 /**
  * Environment configuration for the CDK app.
