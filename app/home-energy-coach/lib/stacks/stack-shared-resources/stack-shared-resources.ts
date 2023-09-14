@@ -5,6 +5,8 @@ import * as cdk from "aws-cdk-lib";
 import { aws_s3 as s3 } from "aws-cdk-lib";
 import { aws_sns as sns } from "aws-cdk-lib";
 import { aws_sns_subscriptions as subscriptions } from "aws-cdk-lib";
+import { aws_dynamodb as dynamodb } from "aws-cdk-lib";
+import { HecDynamoDbConstruct } from "../../constructs/construct-hec-dynamodb/construct-hec-dynamodb";
 
 // <-- NEW CODE STARTS HERE -->
 export interface SharedResourcesStackProps extends cdk.StackProps {
@@ -23,14 +25,15 @@ export class SharedResourcesStack extends cdk.Stack {
    * Constructor for the stack
    * @param {cdk.App} scope - The CDK application scope
    * @param {string} id - Stack ID
-   * @param {cdk.StackProps} props - Optional stack properties
+   * @param {SharedResourcesStackProps} props - Optional stack properties
    */
 
   public readonly rawDataUploadBucket: s3.Bucket;
   public readonly snsTopicRawUpload: sns.Topic;
   public readonly snsTopicCalculatorSummary: sns.Topic;
+  public readonly calculatedEnergyTable: dynamodb.Table;
 
-  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
+  constructor(scope: cdk.App, id: string, props: SharedResourcesStackProps) {
     // Call super constructor
     super(scope, id, props);
 
@@ -54,11 +57,10 @@ export class SharedResourcesStack extends cdk.Stack {
     // Create SNS Notification topic
     this.snsTopicRawUpload = new sns.Topic(this, "SnsTopicRawUpload", {
       displayName: "Home Energy Coach SNS Topic",
-      emailAddress: props.adminEmailAddress,
     });
 
     this.snsTopicRawUpload.addSubscription(
-      new subscriptions.EmailSubscription(props.adminEmail)
+      new subscriptions.EmailSubscription(props.adminEmailAddress)
     );
 
     this.snsTopicCalculatorSummary = new sns.Topic(
@@ -66,12 +68,26 @@ export class SharedResourcesStack extends cdk.Stack {
       "SnsTopicCalculatorSummary",
       {
         displayName: "Home Energy Coach SNS Topic for calculator summary",
-        emailAddress: props.adminEmailAddress,
       }
     );
 
     this.snsTopicCalculatorSummary.addSubscription(
-      new subscriptions.EmailSubscription(props.adminEmail)
+      new subscriptions.EmailSubscription(props.adminEmailAddress)
+    );
+
+    this.calculatedEnergyTable = new HecDynamoDbConstruct(
+      this,
+      "CalculatedEnergyTable",
+      {
+        partitionKey: {
+          name: "id",
+          type: dynamodb.AttributeType.STRING,
+        },
+        sortKey: {
+          name: "date",
+          type: dynamodb.AttributeType.STRING,
+        },
+      }
     );
     // <-- NEW CODE ENDS HERE -->
   }

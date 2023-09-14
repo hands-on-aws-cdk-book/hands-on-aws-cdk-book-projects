@@ -7,7 +7,11 @@ import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 // Here we import all the stack and resources that
 // we are deploying within the app
-import { HelloCdkStack } from "../lib/stacks/stack-data-pipeline/stack-data-pipeline";
+import {
+  DataPipelineStack,
+  HelloCdkStack,
+} from "../lib/stacks/stack-data-pipeline/stack-data-pipeline";
+import { SharedResourcesStack } from "../lib/stacks/stack-shared-resources/stack-shared-resources";
 
 /**
  * Environment configuration for the CDK app.
@@ -50,7 +54,21 @@ const app = new cdk.App();
  * @param {Object} props - Stack properties.
  */
 
-new HelloCdkStack(app, "HelloCdkStack", {
+const sharedResourcesStack = new SharedResourcesStack(
+  app,
+  "SharedResourcesStack",
+  {
+    env: appEnv,
+    description: desc,
+    adminEmailAddress: app.node.tryGetContext("adminEmailAddress"),
+  }
+);
+
+const dataPipelineStack = new DataPipelineStack(app, "DataPipelineStack", {
   env: appEnv,
-  desc,
+  description: desc,
+  rawDataUploadBucket: sharedResourcesStack.rawDataUploadBucket,
+  snsTopicRawUpload: sharedResourcesStack.snsTopicRawUpload,
+  snsTopicCalculatorSummary: sharedResourcesStack.snsTopicCalculatorSummary,
+  calculatedEnergyTable: sharedResourcesStack.calculatedEnergyTable,
 });

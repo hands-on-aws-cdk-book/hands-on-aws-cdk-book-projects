@@ -1,27 +1,18 @@
 /**
- * This stack does the following:
- * 1. Upload raw data to S3
- * 2. Trigger notification
- * 3. Transform CSV to JSON
- * 4. Save to bucket
- * 5. Trigger calculator
- * 6. Send notification
- */
-
-/**
  * Import various modules from AWS CDK and nodejs core libraries
  */
 import * as cdk from "aws-cdk-lib";
 import { aws_s3 as s3 } from "aws-cdk-lib";
 import { aws_lambda as lambda } from "aws-cdk-lib";
 import { aws_s3_notifications as s3n } from "aws-cdk-lib";
+import { aws_dynamodb as dynamodb } from "aws-cdk-lib";
 // <-- NEW CODE STARTS HERE -->
 import { aws_sns as sns } from "aws-cdk-lib";
 // <-- NEW CODE ENDS HERE -->
 import * as path from "path";
 
 // <-- NEW CODE STARTS HERE -->
-export interface DataPipelineStackProps {
+export interface DataPipelineStackProps extends cdk.StackProps {
   /**
    * Required: S3 bucket for raw data upload
    */
@@ -36,6 +27,11 @@ export interface DataPipelineStackProps {
    * Required: notification topic
    */
   readonly snsTopicCalculatorSummary: sns.Topic;
+
+  /**
+   * Required: dynamodb table for calculated energy
+   */
+  readonly calculatedEnergyTable: dynamodb.Table;
 }
 // <-- NEW CODE ENDS HERE -->
 
@@ -56,7 +52,7 @@ export class DataPipelineStack extends cdk.Stack {
 
     // <-- NEW CODE ENDS HERE -->
     // Create S3 bucket to store transformed JSON
-    const jsonTransformedBucket = new s3.Bucket("JsonTransformedBucket", {
+    const jsonTransformedBucket = new s3.Bucket(this, "JsonTransformedBucket", {
       versioned: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
@@ -93,6 +89,7 @@ export class DataPipelineStack extends cdk.Stack {
         environment: {
           snsTopicCalculatorSummary: jsonTransformedBucket.bucketName,
           AWS_REGION: cdk.Stack.of(this).region,
+          CALCULATED_ENERGY_TABLE_NAME: props.calculatedEnergyTable.tableName,
         },
         description:
           "Lambda function transforms CSV to JSON and saves to S3 bucket",
@@ -110,7 +107,7 @@ export class DataPipelineStack extends cdk.Stack {
 
     props.rawDataLandingBucket.addEventNotification(
       s3.EventType.OBJECT_CREATED,
-      new s3n.SnsNotification(props.snsTopicRawUpload, {
+      new s3n.SnsDestination(props.snsTopicRawUpload), {
         suffix: ".csv",
       })
     );
