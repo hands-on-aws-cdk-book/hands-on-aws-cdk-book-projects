@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.DestinationType=void 0;var DestinationType;(function(DestinationType2){DestinationType2.FAILURE="Failure",DestinationType2.SUCCESS="Success"})(DestinationType||(exports.DestinationType=DestinationType={}));

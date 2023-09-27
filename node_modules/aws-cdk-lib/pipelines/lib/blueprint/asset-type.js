@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.AssetType=void 0;var AssetType;(function(AssetType2){AssetType2.FILE="file",AssetType2.DOCKER_IMAGE="docker-image"})(AssetType||(exports.AssetType=AssetType={}));
