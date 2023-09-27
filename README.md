@@ -4,11 +4,6 @@ This repository contains all project components, tutorials, and final project ou
 
 The main branch is a completed version of the shared project from the book: Home Energy Coach. Each chapter has a branch so that you can follow along with the project through each section of the book. Use the table of contents below to navigate to the project for each chapter.
 
-## Table of Contents
-
-- [Chapter 1 - Set up your development environment](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-1/)
-- [Chapter 2 - Hello CDK](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-2/)
-
 ## Final Project Architecture
 
 ```mmd
@@ -76,5 +71,24 @@ KendraSearch
 GenAIChatInterface-->
 ForecastStack
 
-
 ```
+
+## Table of Contents
+
+- [Chapter 1 - Set up your development environment](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-1/)
+- [Chapter 2 - Hello CDK](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-2/)
+- [Chapter 3](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-3/)
+- [Chapter 4](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-4/)
+- [Chapter 5](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-5/)
+- [Chapter 6](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-6/)
+- [Chapter 7](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-7/)
+- [Chapter 8](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-8/)
+- [Chapter 9](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-9/)
+- [Chapter 10](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-10/)
+- [Chapter 11](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-11/)
+- [Chapter 12](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-12/)
+- [Chapter 13](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-13/)
+- [Chapter 14](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-14/)
+- [Chapter 15](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-15/)
+- [Chapter 16](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-16/)
+- [Chapter 17](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-17/)
