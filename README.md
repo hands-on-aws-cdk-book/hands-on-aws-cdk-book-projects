@@ -21,16 +21,16 @@ InputData[Electric Utility Data]-->
 inputS3[Custom S3 Bucket<br/>Raw Data]
 
 inputS3-->
-EventBridge1[Amazon EventBridge<br/>Data Upload Event Trigger 🎬]
+EventBridge1[Amazon EventBridge<br/>Data Upload Event Trigger]
 
 EventBridge1-->
-SNS1[Simple Notification Service<br/>Upload Notification 📲]
+SNS1[Simple Notification Service<br/>Upload Notification]
 
 EventBridge1-->
 Lambda1(Custom Lambda Function<br/>Transform CSV to JSON)
 
-Lambda1
-EventBridge2[Amazon EventBridge<br/>Energy Usage Calculator 🧮]
+Lambda1 -->
+EventBridge2[Amazon EventBridge<br/>Energy Usage Calculator]
 
 EventBridge2-->
 Lambda2(Custom Lambda Function<br/>Calculate Energy Usage)
@@ -42,27 +42,27 @@ Lambda2-->
 analyticsS3(Custom S3 Bucket<br/>Calculated Energy Data)
 
 Lambda2-->
-SNS2[Simple Notification Service<br/>Send Calculator Output 📲]
+SNS2[Simple Notification Service<br/>Send Calculator Output]
 
-GraphQLAPI(GraphQL API<br/>Query DynamoDB)-->
-DynamoDBTable
+DynamoDBTable -->
+api(Rest API<br/>Query DynamoDB)
 
-KendraSearch(Custom Kendra Construct 🔎<br/>Search Electric Usage Records)-->
-DynamoDBTable
+api -->
+Amplify(Amplify Web Application<br/>Custom Construct<br/>Upload and Display Data)
 
-GrafanaDashboard(Grafana Dashboard 📉<br/>Custom Resource<br/>Display Electric Usage Records)-->
-DynamoDBTable
+analyticsS3 -->
+KendraSearch(Custom Kendra Construct<br/>Search Electric Usage Records)
 
-Amplify(Amplify Web Application 💻<br/>Custom Construct<br/>Upload and Display Data)-->
-GraphQLAPI
+DynamoDBTable -->
+GrafanaDashboard(Grafana Dashboard<br/>Custom Resource<br/>Display Electric Usage Records)
 
-Quicksight(Quicksight Dashboard 📊<br/>Custom Resource & Cloudformation<br/>Display Electric Usage Records)-->
+ForecastStack(Amazon Forecast<br/>Forecast Electric Usage)-->
 analyticsS3
 
-ForecastStack(Amazon Forecast 🌡<br/>Forecast Electric Usage)-->
-analyticsS3
+analyticsS3 -->
+GenAIChatInterface(GenAI Chatbot API<br/>Community Construct)
 
-GenAIChatInterface(GenAI Chatbot API 💬<br/>Community Construct)-->
+GenAIChatInterface-->
 DynamoDBTable
 
 GenAIChatInterface-->
