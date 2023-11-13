@@ -6,7 +6,7 @@ The main branch is a completed version of the shared project from the book: Home
 
 ## Final Project Architecture
 
-```mmd
+```mermaid
 
 %%{
   init: {
