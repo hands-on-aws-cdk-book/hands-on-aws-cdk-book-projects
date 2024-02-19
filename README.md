@@ -17,59 +17,45 @@ The main branch is a completed version of the shared project from the book: Home
 
 flowchart LR
 
-InputData[Electric Utility Data]-->
-inputS3[Custom S3 Bucket<br/>Raw Data]
+InputData[Electric Utility Data ⚡️]-->
+inputS3[Custom S3 Bucket 🪣<br/>Raw Data]
 
 inputS3-->
-EventBridge1[Amazon EventBridge<br/>Data Upload Event Trigger]
+EventBridge1[Amazon EventBridge 🎬<br/>Data Upload Event Trigger]
 
 EventBridge1-->
-SNS1[Simple Notification Service<br/>Upload Notification]
+SNS1[Simple Notification Service 📲<br/>Upload Notification]
 
 EventBridge1-->
-Lambda1(Custom Lambda Function<br/>Transform CSV to JSON)
+Lambda1(Custom Lambda Function 🧮<br/>Transform CSV to JSON)
 
-Lambda1 -->
-EventBridge2[Amazon EventBridge<br/>Energy Usage Calculator]
+Lambda1-->
+EventBridge2[Amazon EventBridge 🎬<br/>Energy Usage Calculator Trigger]
 
 EventBridge2-->
-Lambda2(Custom Lambda Function<br/>Calculate Energy Usage)
+Lambda2(Custom Lambda Function 🧮<br/>Calculate Energy Usage)
 
 Lambda2-->
-DynamoDBTable(DynamoDB<br/>Calculated Energy Data)
+DynamoDBTable(DynamoDB 🫙<br/>Calculated Energy Data)
 
 Lambda2-->
-analyticsS3(Custom S3 Bucket<br/>Calculated Energy Data)
+analyticsS3(Custom S3 Bucket 🪣<br/>Calculated Energy Data)
 
 Lambda2-->
-SNS2[Simple Notification Service<br/>Send Calculator Output]
+SNS2[Simple Notification Service 📲<br/>Send Calculator Output]
 
-DynamoDBTable -->
-api(Rest API<br/>Query DynamoDB)
+DynamoDBTable-->
+API(REST API 👾<br/>Query DynamoDB )
 
-api -->
-Amplify(Amplify Web Application<br/>Custom Construct<br/>Upload and Display Data)
+DynamoDBTable-->
+RAGConstruct(Retrieval Augmented Generation Construct 🤖<br/>Chat-based search and summary of Electric Usage Records)
 
-analyticsS3 -->
-KendraSearch(Custom Kendra Construct<br/>Search Electric Usage Records)
+DynamoDBTable-->
+GrafanaDashboard(Grafana Dashboard 📊<br/>Custom Resource<br/>Display Electric Usage Records)
 
-DynamoDBTable -->
-GrafanaDashboard(Grafana Dashboard<br/>Custom Resource<br/>Display Electric Usage Records)
+API-->
+Amplify(Amplify Web Application 🖥️<br/>Custom Construct<br/>Upload and Display Data)
 
-ForecastStack(Amazon Forecast<br/>Forecast Electric Usage)-->
-analyticsS3
-
-analyticsS3 -->
-GenAIChatInterface(GenAI Chatbot API<br/>Community Construct)
-
-GenAIChatInterface-->
-DynamoDBTable
-
-GenAIChatInterface-->
-KendraSearch
-
-GenAIChatInterface-->
-ForecastStack
 
 ```
 
@@ -88,7 +74,3 @@ ForecastStack
 - [Chapter 11](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-11/)
 - [Chapter 12](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-12/)
 - [Chapter 13](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-13/)
-- [Chapter 14](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-14/)
-- [Chapter 15](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-15/)
-- [Chapter 16](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-16/)
-- [Chapter 17](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-17/)
