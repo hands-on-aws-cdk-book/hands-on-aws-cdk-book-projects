@@ -1,0 +1,62 @@
+name: S3 Bucket Update
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      bucket:
+        required: true
+        type: string
+      origin_directory:
+        required: true
+        type: string
+    secrets:
+      AWS_GH_ACTION_OIDC_ROLE:
+        required: true
+
+env:
+  environment: ${{ inputs.environment }}
+  bucket: ${{ inputs.bucket }}
+  directory: ${{ inputs.origin_directory}}
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read
+
+jobs:
+  cdk-deploy:
+    uses: ./.github/workflows/reusable-cdk-deploy.yaml
+    with:
+      environment: "staging"
+      directory: "./project-tools"
+    secrets:
+      AWS_GH_ACTION_OIDC_ROLE: ${{ secrets.AWS_GH_ACTION_OIDC_ROLE }}
+
+  update-bucket:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-1
+      environment: ${{ inputs.environment }}
+      bucket: ${{ inputs.bucket }}
+      directory: ${{ inputs.origin_directory}}
+
+    steps:
+      - uses: actions/checkout@v4
+        name: Git clone the repository
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_GH_ACTION_OIDC_ROLE }}
+          role-session-name: gh-action-session-${{ env.environment }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Put S3 Objects
+        working-directory: ${{ env.directory }}
+        run: |
+          aws s3 cp ../app/resources/aws-cdk-developer-iam-policy.json s3://${{ env.bucket }}/aws-cdk-developer-iam-policy.json
+          aws s3 cp ../app/resources/aws-github-actions-oidc-integration-policy.json s3://${{ env.bucket }}/aws-github-actions-oidc-integration-policy.json
+        env:
+          AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}

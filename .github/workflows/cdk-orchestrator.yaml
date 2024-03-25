@@ -1,0 +1,31 @@
+# .github/workflows/terraform-orchestrator.yml
+name: CDK Orchestrator
+
+on:
+  push:
+
+jobs:
+  project-tools-update:
+    uses: ./.github/workflows/reusable-project-tools-update.yaml
+    with:
+      environment: "dev"
+      resource: "infrastructure"
+    secrets:
+      AWS_GH_ACTION_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+
+  cdk-pre-deploy:
+    uses: ./.github/workflows/reusable-cdk-pre-deploy.yaml
+    with:
+      environment: "dev"
+      resource: "infrastructure"
+    secrets:
+      AWS_GH_ACTION_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+
+  cdk-deploy:
+    needs: cdk-pre-deploy
+    uses: ./.github/workflows/reusable-cdk-deploy.yaml
+    with:
+      environment: "dev"
+      resource: "infrastructure"
+    secrets:
+      AWS_GH_ACTION_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE_ARN }}

@@ -17,10 +17,23 @@ import { HelloCdkStack } from "../lib/stack-data-pipeline/stack-data-pipeline";
  * CLI configured AWS profile.
  * @type {Object}
  */
+
 const appEnv = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
   region: process.env.CDK_DEFAULT_REGION,
 };
+
+// Function to check for required context and exit if not present
+function checkRequiredContext(app: cdk.App, key: string): void {
+  const contextValue = app.node.tryGetContext(key);
+  if (contextValue === undefined || contextValue === "") {
+    console.error(`Error: Missing required context value for '${key}'.`);
+    process.exit(1); // Non-zero exit code indicates failure
+  }
+}
+
+// Call the function with the key for your deployment context
+checkRequiredContext(app, "deployment");
 
 /**
  * Description for the stack. This description gets
@@ -28,7 +41,7 @@ const appEnv = {
  * @type {string}
  */
 const desc =
-  "Home energy coach application from Hands-on AWS CDK Book (created by: Sam Ward Biddle)";
+  "Home energy coach application from Hands-on AWS CDK Book (created by: Sam Ward Biddle & Kyle T. Jones)";
 
 /**
  * The CDK app.
@@ -39,6 +52,8 @@ const desc =
  * @type {cdk.App}
  */
 const app = new cdk.App();
+
+const prependName = app.node.tryGetContext("deployment") || "";
 
 /**
  * HelloCdkStack constructor.

@@ -1,0 +1,52 @@
+name: CDK Pre Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      directory:
+        required: true
+        type: string
+    secrets:
+      AWS_GH_ACTION_OIDC_ROLE:
+        required: true
+
+env:
+  environment: ${{ inputs.environment }}
+  directory: ${{ inputs.directory}}
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read
+
+jobs:
+  cdk-deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-1
+      environment: ${{ inputs.environment }}
+      directory: ${{ inputs.directory}}
+
+    steps:
+      - uses: actions/checkout@v4
+        name: Git clone the repository
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_GH_ACTION_OIDC_ROLE }}
+          role-session-name: gh-action-session-${{ env.environment }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: CDK Build
+        working-directory: ${{ env.directory }}
+        run: |
+          npm i
+          npm run build
+
+      - name: CDK Synth
+        working-directory: ${{ env.directory }}
+        run: |
+          cdk synth
