@@ -51,5 +51,5 @@ const app = new cdk.App();
  */
 new HelloCdkStack(app, "HelloCdkStack", {
   env: appEnv,
-  desc,
+  description: desc,
 });
