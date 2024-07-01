@@ -49,4 +49,4 @@ jobs:
       - name: CDK Synth
         working-directory: ${{ env.directory }}
         run: |
-          cdk synth
+          cdk synth --context deployment=${ env.environment }

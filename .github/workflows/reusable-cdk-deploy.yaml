@@ -45,14 +45,13 @@ jobs:
         run: |
           npm i
           npm run build
-          cdk synth
 
       - name: CDK Synth
         working-directory: ${{ env.directory }}
         run: |
-          cdk synth
+          cdk synth --context deployment=${ env.environment }
 
       - name: CDK Deploy
         working-directory: ${{ env.directory }}
         run: |
-          cdk deploy --all
+          cdk deploy --all --context deployment=${ env.environment }

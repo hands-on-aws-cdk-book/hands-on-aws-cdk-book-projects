@@ -21,7 +21,7 @@ import { aws_sns as sns } from "aws-cdk-lib";
 import * as path from "path";
 
 // <-- NEW CODE STARTS HERE -->
-export interface DataPipelineStackProps {
+export interface DataPipelineStackProps extends cdk.StackProps {
   /**
    * Required: S3 bucket for raw data upload
    */

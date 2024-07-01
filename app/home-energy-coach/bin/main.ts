@@ -1,13 +1,10 @@
 #!/usr/bin/env node
-
-// Our imports include standard imports for the app
-// Import source map suppoer
 import "source-map-support/register";
 // Import the cdk library
 import * as cdk from "aws-cdk-lib";
 // Here we import all the stack and resources that
 // we are deploying within the app
-import { HelloCdkStack } from "../lib/stack-data-pipeline/stack-data-pipeline";
+import { DataPipelineStack } from "../lib/stack-data-pipeline/stack-data-pipeline";
 
 /**
  * Environment configuration for the CDK app.
@@ -32,9 +29,6 @@ function checkRequiredContext(app: cdk.App, key: string): void {
   }
 }
 
-// Call the function with the key for your deployment context
-checkRequiredContext(app, "deployment");
-
 /**
  * Description for the stack. This description gets
  * passed in to every stack to create a unique identifier.
@@ -53,7 +47,10 @@ const desc =
  */
 const app = new cdk.App();
 
-const prependName = app.node.tryGetContext("deployment") || "";
+const deployment = app.node.tryGetContext("deployment") || "";
+
+// Call the function with the key for your deployment context
+checkRequiredContext(app, "deployment");
 
 /**
  * HelloCdkStack constructor.
@@ -65,7 +62,7 @@ const prependName = app.node.tryGetContext("deployment") || "";
  * @param {Object} props - Stack properties.
  */
 
-new HelloCdkStack(app, "HelloCdkStack", {
+new DataPipelineStack(app, `${deployment}DataPipelineStack`, {
   env: appEnv,
   desc,
 });

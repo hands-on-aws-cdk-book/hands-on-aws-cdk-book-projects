@@ -1,4 +1,3 @@
-# .github/workflows/terraform-orchestrator.yml
 name: CDK Orchestrator
 
 on:
@@ -10,6 +9,7 @@ jobs:
     with:
       environment: "dev"
       resource: "infrastructure"
+      bucket: "aws-cdk-book-cfn-one-click-public"
     secrets:
       AWS_GH_ACTION_OIDC_ROLE: ${{ secrets.AWS_OIDC_ROLE_ARN }}
 
