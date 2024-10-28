@@ -65,9 +65,9 @@ Amplify(Amplify Web Application 🖥️<br/>Custom Construct<br/>Upload and Disp
 
 - [Chapter 1 - Set up your development environment](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-1/)
 - [Chapter 2 - Hello CDK](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-2/)
-- [Chapter 3](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-3/)
-- [Chapter 4](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-4/)
-- [Chapter 5](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-5/)
+- [Chapter 3 - Introducing CDK and AWS constructs](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-3/)
+- [Chapter 4 - Building a custom construct](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-4/)
+- [Chapter 5 - Building Multi-Stack CDK Applications](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-5/)
 - [Chapter 6](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-6/)
 - [Chapter 7](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-7/)
 - [Chapter 8](https://github.com/hands-on-aws-cdk-book/hands-on-aws-cdk-book-projects/tree/chapter-8/)
