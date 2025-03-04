@@ -1,68 +1,67 @@
 #!/usr/bin/env node
 import "source-map-support/register";
-// Import the cdk library
 import * as cdk from "aws-cdk-lib";
-// Here we import all the stack and resources that
-// we are deploying within the app
-import { DataPipelineStack } from "../lib/stack-data-pipeline/stack-data-pipeline";
+import { DataPipelineStack } from "../lib/data-pipeline/stack-data-pipeline";
+import { SharedResourcesStack } from "../lib/shared-resources/stack-shared-resources";
+import { DatabaseStack } from "../lib/database/database-stack";
+import { EnergyApiStack } from "../lib/api/api-stack";
 
-/**
- * Environment configuration for the CDK app.
- * This includes the account and region.
- * In this configuration account and region are
- * taken from environmental variables with the AWS
- * CLI configured AWS profile.
- * @type {Object}
- */
-
-const appEnv = {
+/** Environment configuration for all stacks */
+const appEnv: cdk.Environment = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
   region: process.env.CDK_DEFAULT_REGION,
 };
 
-// Function to check for required context and exit if not present
+const app = new cdk.App();
+
+// Function to check for required context
 function checkRequiredContext(app: cdk.App, key: string): void {
   const contextValue = app.node.tryGetContext(key);
-  if (contextValue === undefined || contextValue === "") {
+  if (!contextValue) {
     console.error(`Error: Missing required context value for '${key}'.`);
-    process.exit(1); // Non-zero exit code indicates failure
+    process.exit(1);
   }
 }
 
-/**
- * Description for the stack. This description gets
- * passed in to every stack to create a unique identifier.
- * @type {string}
- */
-const desc =
-  "Home energy coach application from Hands-on AWS CDK Book (created by: Sam Ward Biddle & Kyle T. Jones)";
+const deployment = app.node.tryGetContext("environment") || "dev";
+const adminEmailAddress =
+  app.node.tryGetContext("adminEmailAddress") || "example@example.com";
 
-/**
- * The CDK app.
- * This is the top level class and all stacks and constructs are
- * defined within this app construct. There can only be one app
- * within this file, but you can have multiple apps within the
- * bin director.
- * @type {cdk.App}
- */
-const app = new cdk.App();
+checkRequiredContext(app, "environment");
 
-const deployment = app.node.tryGetContext("deployment") || "";
+/** Default props to be used by all stacks */
+const defaultStackProps: cdk.StackProps = {
+  env: appEnv,
+  description:
+    "Home energy coach application (created by: Sam Ward Biddle & Kyle T. Jones)",
+  tags: {
+    Environment: deployment,
+    Project: "HomeEnergyCoach",
+  },
+};
 
-// Call the function with the key for your deployment context
-checkRequiredContext(app, "deployment");
+const sharedResourcesStack = new SharedResourcesStack(
+  app,
+  `${deployment}SharedResourcesStack`,
+  {
+    ...defaultStackProps,
+    adminEmailAddress,
+  }
+);
 
-/**
- * HelloCdkStack constructor.
- * We are instantiating a new instance of
- * the HelloCdkStack class and passing in the props below
- * @constructor
- * @param {cdk.App} scope - The CDK app scope.
- * @param {string} id - Stack ID.
- * @param {Object} props - Stack properties.
- */
+const databaseStack = new DatabaseStack(app, `${deployment}DatabaseStack`, {
+  ...defaultStackProps,
+});
 
 new DataPipelineStack(app, `${deployment}DataPipelineStack`, {
-  env: appEnv,
-  desc,
+  ...defaultStackProps,
+  rawDataLandingBucket: sharedResourcesStack.rawDataUploadBucket,
+  snsTopicRawUpload: sharedResourcesStack.snsTopicRawUpload,
+  snsTopicCalculatorSummary: sharedResourcesStack.snsTopicCalculatorSummary,
+  calculatedEnergyTable: databaseStack.calculatedEnergyTable,
+});
+
+const apiStack = new EnergyApiStack(app, `${deployment}EnergyApiStack`, {
+  ...defaultStackProps,
+  calculatedEnergyTable: databaseStack.calculatedEnergyTable,
 });

@@ -1,25 +1,56 @@
 import * as cdk from "aws-cdk-lib";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
-import { Construct } from "constructs";
 
 export class DatabaseStack extends cdk.Stack {
-  // Make these public so other stacks can access them
-  public readonly table: dynamodb.Table;
-  public readonly tableName: string;
-  public readonly tableArn: string;
+  public readonly calculatedEnergyTable: dynamodb.Table;
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // Create DynamoDB table
-    this.table = new dynamodb.Table(this, "SimpleTable", {
-      partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    this.calculatedEnergyTable = new dynamodb.Table(
+      this,
+      "CalculatedEnergyTable",
+      {
+        partitionKey: {
+          name: "primaryKey",
+          type: dynamodb.AttributeType.STRING,
+        },
+        sortKey: {
+          name: "timestamp",
+          type: dynamodb.AttributeType.STRING,
+        },
+        billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      }
+    );
+
+    // Add Customer Index
+    this.calculatedEnergyTable.addGlobalSecondaryIndex({
+      indexName: "CustomerIndex",
+      partitionKey: {
+        name: "customerId",
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: "timestamp",
+        type: dynamodb.AttributeType.STRING,
+      },
+      projectionType: dynamodb.ProjectionType.ALL,
     });
 
-    // Store the name and ARN
-    this.tableName = this.table.tableName;
-    this.tableArn = this.table.tableArn;
+    // Add Location Index
+    this.calculatedEnergyTable.addGlobalSecondaryIndex({
+      indexName: "LocationIndex",
+      partitionKey: {
+        name: "locationId",
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: "timestamp",
+        type: dynamodb.AttributeType.STRING,
+      },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
   }
 }
