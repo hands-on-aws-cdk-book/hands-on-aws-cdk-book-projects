@@ -1,48 +1,42 @@
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "sns:*",
-                "rds:*",
-                "apigateway:*",
-                "s3:*",
-                "ecr:CreateRepository",
-                "appsync:*",
-                "cloudformation:*",
-                "dynamodb:*",
-                "forecast:*",
-                "codebuild:*",
-                "amplify:*",
-                "iam:*",
-                "cloudfront:*",
-                "codecommit:*",
-                "ses:*",
-                "grafana:*",
-                "ssm:*",
-                "lookoutequipment:*",
-                "sagemaker:*",
-                "lambda:*",
-                "ecr:*",
-                "quicksight:*",
-                "codepipeline:*",
-                "events:*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Deny",
-            "Action": [
-                "dynamodb:CreateTable",
-                "sagemaker:UpdateEndpoint",
-                "sagemaker:CreateEndpoint",
-                "rds:CreateDBInstance",
-                "rds:ModifyDBInstance"
-            ],
-            "Resource": "*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*",
+        "events:*",
+        "lambda:*",
+        "codecommit:*",
+        "codebuild:*",
+        "codepipeline:*",
+        "sns:*",
+        "dynamodb:*",
+        "rds:*",
+        "amplify:*",
+        "cloudfront:*",
+        "appsync:*",
+        "apigateway:*",
+        "quicksight:*",
+        "forecast:*",
+        "lookoutequipment:*",
+        "sagemaker:*",
+        "grafana:*",
+        "ses:*",
+        "cloudformation:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Deny",
+      "Action": [
+        "dynamodb:CreateTable",
+        "rds:CreateDBInstance",
+        "rds:ModifyDBInstance",
+        "sagemaker:CreateEndpoint",
+        "sagemaker:UpdateEndpoint"
+      ],
+      "Resource": "*"
+    }
+  ]
 }

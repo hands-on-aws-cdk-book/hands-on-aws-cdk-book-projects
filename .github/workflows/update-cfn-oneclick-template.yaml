@@ -1,0 +1,40 @@
+name: Update CloudFormation One-Click Template
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "resources/iam/template.yaml"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  update-template:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-1
+      BUCKET: hands-on-aws-cdk-projects-iam-policy-one-click-cfn
+
+    steps:
+      - uses: actions/checkout@v4
+        name: Git clone the repository
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: gh-action-session-template-update
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload template to S3
+        run: |
+          aws s3 cp resources/iam/template.yaml s3://${{ env.BUCKET }}/template.yaml
+          # Note: Since ACLs are not supported, we'll need to ensure the bucket policy allows public read instead
+
+      - name: Verify template accessibility
+        run: |
+          sleep 5
+          curl -sf https://${{ env.BUCKET }}.s3.amazonaws.com/template.yaml > /dev/null

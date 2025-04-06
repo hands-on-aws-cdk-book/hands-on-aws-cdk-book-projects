@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Automated setup for CDK Developer with required policies"
+
+Parameters:
+  CDKDeveloperUserName:
+    Type: String
+    Default: CdkDeveloper
+    Description: Username for the CDK developer IAM user
+
+Resources:
+  # CDK Developer Policy
+  CDKDeveloperPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: CDKDeveloperPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              # CDK Bootstrap and Development Requirements
+              - cloudformation:*
+              - iam:*
+              - sts:AssumeRole
+              - sts:GetCallerIdentity
+              - sts:GetSessionToken
+              - sts:GetServiceBearerToken
+              - sts:GetCallerIdentity
+              - sts:GetCallerIdentity
+              - sts:GetCallerIdentity
+
+              # Core Services Used in Projects
+              - s3:*
+              - amplify:*
+              - lambda:*
+              - apigateway:*
+              - dynamodb:*
+              - sns:*
+              - ses:*
+              - events:*
+              - cloudwatch:*
+              - logs:*
+              - secretsmanager:*
+              - kms:*
+              - route53:*
+              - acm:*
+              - cloudfront:*
+              - ssm:*
+              - quicksight:*
+              - cognito-idp:*
+              - cognito-identity:*
+              - quicksight:*
+            Resource: "*"
+
+          # Deny potentially costly operations
+          - Effect: Deny
+            Action:
+              - dynamodb:CreateTable
+              - rds:CreateDBInstance
+              - rds:ModifyDBInstance
+              - sagemaker:CreateEndpoint
+              - sagemaker:UpdateEndpoint
+            Resource: "*"
+
+  CDKDeveloperUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref CDKDeveloperUserName
+      ManagedPolicyArns:
+        - !Ref CDKDeveloperPolicy
+
+  CDKDeveloperAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref CDKDeveloperUser
+
+Outputs:
+  CDKDeveloperUserName:
+    Description: CDK Developer username
+    Value: !Ref CDKDeveloperUser
+
+  CDKDeveloperAccessKey:
+    Description: CDK Developer access key
+    Value: !Ref CDKDeveloperAccessKey
+
+  CDKDeveloperSecretKey:
+    Description: CDK Developer secret key
+    Value: !GetAtt CDKDeveloperAccessKey.SecretAccessKey
+
+  ConsoleLoginURL:
+    Description: Console login URL
+    Value: !Sub https://${AWS::AccountId}.signin.aws.amazon.com/console
