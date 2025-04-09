@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
-import { DataPipelineStack } from "../lib/data-pipeline/stack-data-pipeline";
-import { SharedResourcesStack } from "../lib/shared-resources/stack-shared-resources";
-import { DatabaseStack } from "../lib/database/database-stack";
-import { EnergyApiStack } from "../lib/api/api-stack";
+import { DataPipelineStack } from "../lib/stacks/data-pipeline/stack-data-pipeline";
+import { SharedResourcesStack } from "../lib/stacks/shared-resources/stack-shared-resources";
+import { EnergyApiStack } from "../lib/stacks/api/api-stack";
+import { AuthStack } from "../lib/stacks/auth/stack-auth";
+import { ChatbotStack } from "../lib/stacks/chatbot/chatbot-stack";
+import { WebStack } from "../lib/stacks/web/web-stack";
+import { HelloCdkStack } from "../lib/stacks/hello-cdk/hello-cdk-stack";
 
 /** Environment configuration for all stacks */
 const appEnv: cdk.Environment = {
@@ -40,28 +43,72 @@ const defaultStackProps: cdk.StackProps = {
   },
 };
 
+// Create shared resources first (includes DynamoDB)
 const sharedResourcesStack = new SharedResourcesStack(
   app,
-  `${deployment}SharedResourcesStack`,
+  "SharedResourcesStack",
   {
-    ...defaultStackProps,
-    adminEmailAddress,
+    env: {
+      account: process.env.CDK_DEFAULT_ACCOUNT,
+      region: process.env.CDK_DEFAULT_REGION,
+    },
   }
 );
 
-const databaseStack = new DatabaseStack(app, `${deployment}DatabaseStack`, {
+// Create auth stack
+const authStack = new AuthStack(app, `AuthStack`, {
   ...defaultStackProps,
 });
 
-new DataPipelineStack(app, `${deployment}DataPipelineStack`, {
-  ...defaultStackProps,
-  rawDataLandingBucket: sharedResourcesStack.rawDataUploadBucket,
-  snsTopicRawUpload: sharedResourcesStack.snsTopicRawUpload,
-  snsTopicCalculatorSummary: sharedResourcesStack.snsTopicCalculatorSummary,
-  calculatedEnergyTable: databaseStack.calculatedEnergyTable,
+// Create data pipeline stack
+const dataPipelineStack = new DataPipelineStack(app, "DataPipelineStack", {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
+  sharedResourcesStack,
+  calculatedEnergyTable: sharedResourcesStack.calculatedEnergyTable,
+  adminEmailAddress: "admin@example.com", // Replace with actual admin email
 });
 
-const apiStack = new EnergyApiStack(app, `${deployment}EnergyApiStack`, {
+// Create Q Business chatbot stack
+const chatbotStack = new ChatbotStack(app, `ChatbotStack`, {
   ...defaultStackProps,
-  calculatedEnergyTable: databaseStack.calculatedEnergyTable,
+  calculatedEnergyTable: sharedResourcesStack.calculatedEnergyTable,
 });
+
+// Create API stack
+const apiStack = new EnergyApiStack(app, `EnergyApiStack`, {
+  ...defaultStackProps,
+  calculatedEnergyTable: sharedResourcesStack.calculatedEnergyTable,
+  userPool: authStack.userPool,
+  userPoolClient: authStack.userPoolClient,
+  customEnvironmentVariables: {
+    Q_CHATBOT_ID: chatbotStack.chatbot.chatbotId,
+    Q_CHATBOT_ENABLED: "true",
+  },
+});
+
+// Create Web stack with Amplify
+const webStack = new WebStack(app, `WebStack`, {
+  ...defaultStackProps,
+  githubRepositoryUrl:
+    "https://github.com/hands-on-aws-cdk-book/home-energy-coach-frontend-sample",
+  githubBranch: "main",
+  userPoolId: authStack.userPool.userPoolId,
+  userPoolClientId: authStack.userPoolClient.userPoolClientId,
+  region: appEnv.region || "us-east-1",
+  githubTokenSecretName: "github-token", // Replace with your actual secret name
+  apiEndpointUrl: apiStack.restApiEndpoint, // Use the restApiEndpoint property
+});
+
+// Create Hello CDK stack
+const helloCdkStack = new HelloCdkStack(app, `HelloCdkStack`, {
+  ...defaultStackProps,
+});
+
+// Add dependencies
+dataPipelineStack.addDependency(sharedResourcesStack);
+webStack.addDependency(authStack);
+
+app.synth();
