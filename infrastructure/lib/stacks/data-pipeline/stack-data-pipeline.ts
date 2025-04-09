@@ -23,7 +23,7 @@ export interface DataPipelineStackProps extends cdk.StackProps {
 /** Creates a serverless pipeline for processing energy usage data */
 export class DataPipelineStack extends cdk.Stack {
   /** S3 bucket for raw CSV data uploads */
-  public readonly rawDataLandingBucket: s3.Bucket;
+  public readonly rawDataBucket: s3.Bucket;
   /** JSON data storage with versioning enabled */
   public readonly jsonTransformedBucket: s3.Bucket;
   /** SNS topic for new data upload notifications */
@@ -34,19 +34,16 @@ export class DataPipelineStack extends cdk.Stack {
   public readonly transformToJsonLambdaFunction: lambda.Function;
   /** Processes energy data and sends notifications */
   public readonly calculateAndNotifyLambdaFunction: lambda.Function;
+  /** S3 bucket for processed data */
+  public readonly processedDataBucket: s3.Bucket;
 
   constructor(scope: cdk.App, id: string, props: DataPipelineStackProps) {
     super(scope, id, props);
 
     /** S3 bucket for raw CSV data uploads */
-    this.rawDataLandingBucket = new s3.Bucket(this, "RawDataLandingBucket", {
+    this.rawDataBucket = new s3.Bucket(this, "RawDataBucket", {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
-      lifecycleRules: [
-        {
-          expiration: cdk.Duration.days(1),
-        },
-      ],
     });
 
     /** JSON data storage with versioning enabled */
@@ -116,7 +113,7 @@ export class DataPipelineStack extends cdk.Stack {
     );
 
     // Set up permissions between components
-    this.rawDataLandingBucket.grantRead(this.transformToJsonLambdaFunction);
+    this.rawDataBucket.grantRead(this.transformToJsonLambdaFunction);
     this.jsonTransformedBucket.grantWrite(this.transformToJsonLambdaFunction);
     this.jsonTransformedBucket.grantRead(this.calculateAndNotifyLambdaFunction);
     props.calculatedEnergyTable.grantWriteData(
@@ -124,13 +121,13 @@ export class DataPipelineStack extends cdk.Stack {
     );
 
     // Wire up the event notifications
-    this.rawDataLandingBucket.addEventNotification(
+    this.rawDataBucket.addEventNotification(
       s3.EventType.OBJECT_CREATED,
       new s3n.LambdaDestination(this.transformToJsonLambdaFunction),
       { suffix: ".csv" }
     );
 
-    this.rawDataLandingBucket.addEventNotification(
+    this.rawDataBucket.addEventNotification(
       s3.EventType.OBJECT_CREATED,
       new s3n.SnsDestination(this.snsTopicRawUpload),
       { suffix: ".csv.notify" }
@@ -142,9 +139,15 @@ export class DataPipelineStack extends cdk.Stack {
       { suffix: ".json" }
     );
 
+    // Create S3 bucket for processed data
+    this.processedDataBucket = new s3.Bucket(this, "ProcessedDataBucket", {
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    });
+
     // Export bucket names for reference
-    new cdk.CfnOutput(this, "RawDataLandingBucketName", {
-      value: this.rawDataLandingBucket.bucketName,
+    new cdk.CfnOutput(this, "RawDataBucketName", {
+      value: this.rawDataBucket.bucketName,
       description: "S3 bucket for raw CSV data uploads",
     });
 

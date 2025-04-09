@@ -1,10 +1,13 @@
 import * as cdk from "aws-cdk-lib";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as s3 from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 import { ChatbotConstruct } from "../../constructs/chatbot/chatbot-construct";
 
 interface ChatbotStackProps extends cdk.StackProps {
   readonly calculatedEnergyTable: dynamodb.Table;
+  readonly identityCenterInstanceArn: string;
+  readonly knowledgeBaseBucket: s3.Bucket;
 }
 
 export class ChatbotStack extends cdk.Stack {
@@ -21,6 +24,8 @@ export class ChatbotStack extends cdk.Stack {
     this.chatbot = new ChatbotConstruct(this, "EnergyCoachChatbot", {
       table: props.calculatedEnergyTable,
       applicationName: applicationName,
+      identityCenterInstanceArn: props.identityCenterInstanceArn,
+      knowledgeBaseBucket: props.knowledgeBaseBucket,
     });
 
     // Stack outputs

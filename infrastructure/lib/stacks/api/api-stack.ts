@@ -5,18 +5,18 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import { RestApiConstruct } from "../../constructs/rest-api/rest-api-construct";
 import * as path from "path";
 
-interface EnergyApiStackProps extends cdk.StackProps {
+interface ApiStackProps extends cdk.StackProps {
   readonly calculatedEnergyTable: dynamodb.Table;
   readonly userPool?: cognito.IUserPool;
   readonly userPoolClient?: cognito.IUserPoolClient;
   readonly customEnvironmentVariables?: Record<string, string>;
 }
 
-export class EnergyApiStack extends cdk.Stack {
+export class ApiStack extends cdk.Stack {
   public readonly restApiEndpoint: string;
   public readonly graphqlApiKey?: string;
 
-  constructor(scope: cdk.App, id: string, props: EnergyApiStackProps) {
+  constructor(scope: cdk.App, id: string, props: ApiStackProps) {
     super(scope, id, props);
 
     // REST API Implementation

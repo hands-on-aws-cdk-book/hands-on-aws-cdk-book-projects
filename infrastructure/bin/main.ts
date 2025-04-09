@@ -3,7 +3,7 @@ import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 import { DataPipelineStack } from "../lib/stacks/data-pipeline/stack-data-pipeline";
 import { SharedResourcesStack } from "../lib/stacks/shared-resources/stack-shared-resources";
-import { EnergyApiStack } from "../lib/stacks/api/api-stack";
+import { ApiStack } from "../lib/stacks/api/api-stack";
 import { AuthStack } from "../lib/stacks/auth/stack-auth";
 import { ChatbotStack } from "../lib/stacks/chatbot/chatbot-stack";
 import { WebStack } from "../lib/stacks/web/web-stack";
@@ -29,8 +29,12 @@ function checkRequiredContext(app: cdk.App, key: string): void {
 const deployment = app.node.tryGetContext("environment") || "dev";
 const adminEmailAddress =
   app.node.tryGetContext("adminEmailAddress") || "example@example.com";
+const identityCenterInstanceArn = app.node.tryGetContext(
+  "identityCenterInstanceArn"
+);
 
 checkRequiredContext(app, "environment");
+checkRequiredContext(app, "identityCenterInstanceArn");
 
 /** Default props to be used by all stacks */
 const defaultStackProps: cdk.StackProps = {
@@ -75,10 +79,12 @@ const dataPipelineStack = new DataPipelineStack(app, "DataPipelineStack", {
 const chatbotStack = new ChatbotStack(app, `ChatbotStack`, {
   ...defaultStackProps,
   calculatedEnergyTable: sharedResourcesStack.calculatedEnergyTable,
+  identityCenterInstanceArn: identityCenterInstanceArn,
+  knowledgeBaseBucket: dataPipelineStack.jsonTransformedBucket,
 });
 
 // Create API stack
-const apiStack = new EnergyApiStack(app, `EnergyApiStack`, {
+const apiStack = new ApiStack(app, `ApiStack`, {
   ...defaultStackProps,
   calculatedEnergyTable: sharedResourcesStack.calculatedEnergyTable,
   userPool: authStack.userPool,

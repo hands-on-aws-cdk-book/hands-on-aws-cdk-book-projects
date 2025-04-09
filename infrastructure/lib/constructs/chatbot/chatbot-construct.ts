@@ -8,6 +8,8 @@ import { Construct } from "constructs";
 interface ChatbotConstructProps {
   readonly table: dynamodb.Table;
   readonly applicationName: string;
+  readonly identityCenterInstanceArn: string;
+  readonly knowledgeBaseBucket: s3.Bucket;
 }
 
 export class ChatbotConstruct extends Construct {
@@ -17,11 +19,8 @@ export class ChatbotConstruct extends Construct {
   constructor(scope: Construct, id: string, props: ChatbotConstructProps) {
     super(scope, id);
 
-    // Create S3 bucket for knowledge base
-    this.knowledgeBase = new s3.Bucket(this, "KnowledgeBaseBucket", {
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-      autoDeleteObjects: true,
-    });
+    // Use the provided knowledge base bucket
+    this.knowledgeBase = props.knowledgeBaseBucket;
 
     // Create the data source role
     const dataSourceRole = new iam.Role(this, "DataSourceRole", {
@@ -62,16 +61,19 @@ export class ChatbotConstruct extends Construct {
         service: "QBusiness",
         action: "createApplication",
         parameters: {
-          name: props.applicationName,
-          description: "Energy usage assistant powered by Amazon Q Business",
           displayName: props.applicationName,
+          description: "Energy usage assistant powered by Amazon Q Business",
           roleArn: applicationRole.roleArn,
           identityType: "AWS_IAM_IDC",
-          identityCenterConfiguration: {
-            identityCenterEnabled: false,
+          identityCenterInstanceArn: props.identityCenterInstanceArn,
+          attachmentsConfiguration: {
+            attachmentsControlMode: "DISABLED",
           },
-          identityProviderConfiguration: {
-            identityProviderType: "IAM",
+          qAppsConfiguration: {
+            qAppsControlMode: "DISABLED",
+          },
+          personalizationConfiguration: {
+            personalizationControlMode: "DISABLED",
           },
         },
         physicalResourceId: cr.PhysicalResourceId.of(
@@ -85,11 +87,19 @@ export class ChatbotConstruct extends Construct {
           applicationId: cr.PhysicalResourceId.of(
             `${props.applicationName}-app`
           ).toString(),
-          name: props.applicationName,
-          description: "Energy usage assistant powered by Amazon Q Business",
           displayName: props.applicationName,
-          identityProviderConfiguration: {
-            identityProviderType: "IAM",
+          description: "Energy usage assistant powered by Amazon Q Business",
+          roleArn: applicationRole.roleArn,
+          identityType: "AWS_IAM_IDC",
+          identityCenterInstanceArn: props.identityCenterInstanceArn,
+          attachmentsConfiguration: {
+            attachmentsControlMode: "DISABLED",
+          },
+          qAppsConfiguration: {
+            qAppsControlMode: "DISABLED",
+          },
+          personalizationConfiguration: {
+            personalizationControlMode: "DISABLED",
           },
         },
         physicalResourceId: cr.PhysicalResourceId.of(

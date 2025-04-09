@@ -78,7 +78,7 @@ curl -X POST https://your-api-endpoint/chat \
 2. Deploy using CDK:
 
 ```bash
-cdk deploy EnergyApiStack
+cdk deploy ApiStack
 ```
 
 ## Security Considerations
