@@ -24,6 +24,7 @@
     "@hands-on-aws-cdk-book/custom-amplify-construct": "^0.1.1",
     "aws-cdk-lib": "^2.54.0",
     "aws-sdk": "^2.1502.0",
+    "cdk-nag": "^2.35.66",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.21"
   }
